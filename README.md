@@ -50,4 +50,3 @@ with a 50k stop-words list.
 | `countries.py`  | Top-30 country mapping (canonical key → variants) |
 | `requirements.txt` | Python dependencies (`pyahocorasick`) |
 | `build.bat` | Windows one-file build script (PyInstaller) |
-| `old_filt.py` | Reference: original CLI script without GUI |
