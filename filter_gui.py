@@ -18,7 +18,7 @@ from tkinter import filedialog, messagebox, ttk
 
 import ahocorasick
 
-from countries import COUNTRIES, EMPTY_COUNTRY_VALUES, build_allowed_set
+from countries import COUNTRIES, EMPTY_COUNTRY_VALUES, TIERS, build_allowed_set
 
 PRIVACY_ANY = "any"
 PRIVACY_OPEN = "open"
@@ -215,7 +215,7 @@ class App:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         root.title("IAM BD Filter")
-        root.geometry("780x780")
+        root.geometry("1100x950")
 
         self.db_var = tk.StringVar()
         self.sw_var = tk.StringVar()
@@ -293,23 +293,40 @@ class App:
         geo = ttk.LabelFrame(self.root, text="Geo (empty country is always rejected)")
         geo.pack(fill="x", padx=8, pady=6)
 
-        btns = ttk.Frame(geo)
-        btns.pack(fill="x")
+        top_btns = ttk.Frame(geo)
+        top_btns.pack(fill="x", padx=4, pady=2)
         ttk.Button(
-            btns, text="Select all", command=lambda: self._toggle_all(True)
-        ).pack(side="left", padx=4, pady=2)
+            top_btns, text="Select all", command=lambda: self._toggle_all(True)
+        ).pack(side="left", padx=4)
         ttk.Button(
-            btns, text="Clear all", command=lambda: self._toggle_all(False)
-        ).pack(side="left", padx=4, pady=2)
+            top_btns, text="Clear all", command=lambda: self._toggle_all(False)
+        ).pack(side="left", padx=4)
 
-        grid = ttk.Frame(geo)
-        grid.pack(fill="x")
-        cols = 5
-        for i, key in enumerate(self.country_vars):
-            r, c = divmod(i, cols)
-            ttk.Checkbutton(grid, text=key, variable=self.country_vars[key]).grid(
-                row=r, column=c, sticky="w", padx=6, pady=1
-            )
+        for tier_name, keys in TIERS.items():
+            tier_frame = ttk.LabelFrame(geo, text=tier_name)
+            tier_frame.pack(fill="x", padx=6, pady=4)
+
+            tier_btns = ttk.Frame(tier_frame)
+            tier_btns.pack(fill="x", padx=4, pady=2)
+            ttk.Button(
+                tier_btns,
+                text=f"Select {tier_name.split('—')[0].strip()}",
+                command=lambda ks=keys: self._toggle_tier(ks, True),
+            ).pack(side="left", padx=4)
+            ttk.Button(
+                tier_btns,
+                text=f"Clear {tier_name.split('—')[0].strip()}",
+                command=lambda ks=keys: self._toggle_tier(ks, False),
+            ).pack(side="left", padx=4)
+
+            grid = ttk.Frame(tier_frame)
+            grid.pack(fill="x", padx=4, pady=2)
+            cols = 6
+            for i, key in enumerate(keys):
+                r, c = divmod(i, cols)
+                ttk.Checkbutton(grid, text=key, variable=self.country_vars[key]).grid(
+                    row=r, column=c, sticky="w", padx=6, pady=1
+                )
 
         ttk.Label(geo, text="Custom countries (latin, comma-separated):").pack(
             anchor="w", padx=6, pady=(6, 0)
@@ -379,6 +396,11 @@ class App:
     def _toggle_all(self, state: bool) -> None:
         for v in self.country_vars.values():
             v.set(state)
+
+    def _toggle_tier(self, keys: list[str], state: bool) -> None:
+        for key in keys:
+            if key in self.country_vars:
+                self.country_vars[key].set(state)
 
     def _append_log(self, text: str) -> None:
         self.log_text.config(state="normal")
