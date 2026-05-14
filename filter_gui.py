@@ -215,7 +215,7 @@ class App:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         root.title("IAM BD Filter")
-        root.geometry("1100x950")
+        root.geometry("820x820")
 
         self.db_var = tk.StringVar()
         self.sw_var = tk.StringVar()
@@ -302,26 +302,30 @@ class App:
             top_btns, text="Clear all", command=lambda: self._toggle_all(False)
         ).pack(side="left", padx=4)
 
-        for tier_name, keys in TIERS.items():
-            tier_frame = ttk.LabelFrame(geo, text=tier_name)
-            tier_frame.pack(fill="x", padx=6, pady=4)
+        notebook = ttk.Notebook(geo)
+        notebook.pack(fill="x", padx=6, pady=4)
 
-            tier_btns = ttk.Frame(tier_frame)
-            tier_btns.pack(fill="x", padx=4, pady=2)
+        for tier_name, keys in TIERS.items():
+            tab = ttk.Frame(notebook)
+            notebook.add(tab, text=tier_name)
+
+            tier_btns = ttk.Frame(tab)
+            tier_btns.pack(fill="x", padx=4, pady=4)
+            short_name = tier_name.split("—")[0].strip()
             ttk.Button(
                 tier_btns,
-                text=f"Select {tier_name.split('—')[0].strip()}",
+                text=f"Select {short_name}",
                 command=lambda ks=keys: self._toggle_tier(ks, True),
             ).pack(side="left", padx=4)
             ttk.Button(
                 tier_btns,
-                text=f"Clear {tier_name.split('—')[0].strip()}",
+                text=f"Clear {short_name}",
                 command=lambda ks=keys: self._toggle_tier(ks, False),
             ).pack(side="left", padx=4)
 
-            grid = ttk.Frame(tier_frame)
+            grid = ttk.Frame(tab)
             grid.pack(fill="x", padx=4, pady=2)
-            cols = 6
+            cols = 5
             for i, key in enumerate(keys):
                 r, c = divmod(i, cols)
                 ttk.Checkbutton(grid, text=key, variable=self.country_vars[key]).grid(
