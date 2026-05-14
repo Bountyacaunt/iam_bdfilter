@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# IDE / cache
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.vscode/
+.idea/
+
+# Databases (private user data)
+*.pb
+*.db
+*.sqlite
+*.sqlite3
+
+# Stop-word lists (user-private)
+bad_words*.txt
+stop_words*.txt
+stopwords*.txt
+default_stopwords*.txt
+
+# Filter output
+ids*.txt
+output*.txt
+out*.txt
+
+# Misc
+docs/
+plan.md
+*.log
+.DS_Store
